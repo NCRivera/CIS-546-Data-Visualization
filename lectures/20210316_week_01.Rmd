@@ -1,0 +1,303 @@
+---
+title: "CIS546 Data Visualization Week 1"
+author: "Nicholas Rivera"
+date: "3/16/2021"
+output: html_document
+---
+
+```{r}
+# install.packages("gapminder")
+library(gapminder)
+library(tidyverse)
+```
+
+
+```{r}
+library(fs)
+dir_create("./CIS-546-Data-Visualization/images")
+```
+
+
+```{r}
+gapminder %>% 
+    ggplot(mapping = aes(x = gdpPercap, y = lifeExp)) + 
+    geom_point()
+```
+
+
+```{r}
+gapminder %>% 
+    ggplot(mapping = aes(x = gdpPercap, y = lifeExp)) + 
+    geom_point() + 
+    geom_smooth(method = "gam") + 
+    scale_x_log10()
+```
+
+
+```{r}
+gapminder %>% 
+    ggplot(mapping = aes(x = gdpPercap, y = lifeExp)) + 
+    geom_point() + 
+    geom_smooth(method = "gam") + 
+    scale_x_log10(label = scales::dollar)
+```
+
+```{r}
+gapminder %>% 
+    ggplot(mapping = aes(x = gdpPercap, y = lifeExp)) + 
+    geom_point(color = "purple") + 
+    geom_smooth(method = "loess", se = FALSE) + 
+    scale_x_log10(label = scales::dollar)
+```
+
+```{r}
+gapminder %>% 
+    ggplot(mapping = aes(x = gdpPercap, y = lifeExp)) + 
+    geom_point(color = "purple") + 
+    geom_smooth(method = "loess", se = FALSE) + 
+    scale_x_log10(label = scales::dollar) + 
+    labs(
+        x = "GDP Per Capita", 
+        y = "Life Expectancy in Years", 
+        title = "", 
+        subtitle = ""
+    )
+```
+
+
+```{r}
+gapminder %>% 
+    ggplot(mapping = aes(x = gdpPercap, y = lifeExp, color = continent)) + 
+    geom_point() + 
+    geom_smooth(method = "loess", se = FALSE) + 
+    scale_x_log10(label = scales::dollar)
+    
+```
+
+
+```{r}
+gapminder %>% 
+    ggplot(mapping = aes(x = gdpPercap, y = lifeExp)) + 
+    geom_point(mapping = aes(color = continent)) + 
+    geom_smooth(method = "loess", se = TRUE) + 
+    scale_x_log10(label = scales::dollar)
+```
+
+# GGplot2 - Part 2
+
+```{r}
+plot <- gapminder %>% 
+    ggplot(mapping = aes(x = gdpPercap, y = lifeExp)) + 
+    geom_point(mapping = aes(color = continent)) + 
+    geom_smooth(method = "loess", se = TRUE) + 
+    scale_x_log10(label = scales::dollar)
+
+ggsave(file = "DiamondsGGS.png", plot = plot)
+```
+
+
+```{r}
+p <- gapminder %>% 
+    ggplot(mapping = aes(x = year, y = gdpPercap)) + 
+    geom_point(mapping = aes(color = country))
+
+ggsave(file = "yearVSGDP_country.png", plot = p, width = 20, height = 20)
+p
+```
+
+
+```{r}
+p <- gapminder %>% 
+    ggplot(mapping = aes(x = year, y = gdpPercap)) + 
+    geom_line()
+p
+```
+
+```{r}
+p <- gapminder %>% 
+    ggplot(mapping = aes(x = year, y = gdpPercap)) + 
+    geom_line(mapping = aes(group = country))
+p
+
+p <- gapminder %>% 
+    ggplot(mapping = aes(x = year, y = gdpPercap)) + 
+    geom_line(mapping = aes(group = country, color = country))
+p
+
+ggsave(file = "yearVSGDP_countryGrouped.png", plot = p, width = 20, height = 20)
+```
+
+
+```{r}
+p <- gapminder %>% 
+    ggplot(mapping = aes(x = year, y = gdpPercap)) + 
+    geom_line(mapping = aes(group = country)) + 
+    facet_wrap(~continent)
+p
+```
+
+```{r}
+p <- gapminder %>% 
+    ggplot(mapping = aes(x = year, y = gdpPercap)) + 
+    geom_line(mapping = aes(group = country)) + 
+    geom_smooth(size = 1.1, method="loess", se = FALSE) + 
+    scale_y_log10(labels = scales::dollar) +
+    theme(axis.text.x = element_text(angle = 90)) + 
+    facet_wrap(~continent, ncol = 5) + 
+    labs(
+        x = "Year", 
+        y = "GDP per Capita", 
+        title = "GDP per Capita on Five Continents", 
+        subtitle = "Source: Gapminder"
+    )
+p
+ggsave(file = "../CIS-546-Data-Visualization/images/imagesYearVsGDP_facetNcol_x90.png", plot = p)
+```
+
+
+```{r}
+devtools::install_github("kjhealy/socviz")
+library(socviz)
+```
+
+```{r}
+p <- 
+```
+
+```{r}
+p <- gss_sm %>% 
+    ggplot(mapping = aes(x = bigregion)) + 
+    geom_bar()
+p
+```
+
+```{r}
+p <- gss_sm %>% 
+    ggplot(mapping = aes(x = bigregion)) + 
+    geom_bar(mapping = aes(y = ..prop..))
+p
+```
+
+```{r}
+p <- gss_sm %>% 
+    ggplot(mapping = aes(x = bigregion)) + 
+    geom_bar(mapping = aes(y = ..prop.., group = 1))
+p
+```
+
+
+```{r}
+table(gss_sm$religion)
+```
+
+```{r}
+p <- gss_sm %>% 
+    ggplot(mapping = aes(x = religion, color = religion)) + 
+    geom_bar()
+p
+
+p <- gss_sm %>% 
+    ggplot(mapping = aes(x = religion, fill = religion)) + 
+    geom_bar() + 
+    guides(fill = FALSE)
+p
+```
+
+```{r}
+p <- gss_sm %>% 
+    ggplot(mapping = aes(bigregion, fill = religion)) + 
+    geom_bar()
+p
+```
+
+```{r}
+p <- gss_sm %>% 
+    ggplot(mapping = aes(bigregion, fill = religion)) + 
+    geom_bar(position = "fill")
+p
+```
+
+
+```{r}
+p <- gss_sm %>% 
+    ggplot(mapping = aes(bigregion, fill = religion)) + 
+    geom_bar(position = "dodge", mapping = aes(y = ..prop..))
+p
+```
+
+
+```{r}
+p <- gss_sm %>% 
+    ggplot(mapping = aes(bigregion, fill = religion)) + 
+    geom_bar(position = "dodge", mapping = aes(y = ..prop.., group = religion))
+p
+```
+
+```{r}
+midwest %>% glimpse()
+```
+
+
+```{r}
+p <- midwest %>% 
+    ggplot(mapping = aes(x = area)) + 
+    geom_histogram()
+p
+```
+
+
+```{r}
+p <- midwest %>% 
+    ggplot(mapping = aes(x = area)) + 
+    geom_histogram(bins = 10)
+p
+```
+
+```{r}
+oh_wi <- c("OH", "WI")
+midwest_OhWi <- subset(midwest, subset = state %in% oh_wi)
+midwest_OhWi %>% head()
+```
+
+
+```{r}
+p <- midwest_OhWi %>% 
+    ggplot(mapping = aes(x = area, fill = state)) + 
+    geom_histogram(alpha = 0.4, bins = 20)
+p
+```
+
+```{r}
+p <- midwest_OhWi %>% 
+    ggplot(mapping = aes(x = area, fill = state)) + 
+    geom_density(alpha = 0.4)
+p
+```
+
+
+```{r}
+midwest_OhWi %>% 
+    ggplot(mapping = aes(x = area, fill = state)) + 
+    geom_histogram(alpha = 0.4, bins = 20) +
+    geom_density(alpha = 0.4)
+```
+
+```{r}
+titanic
+```
+
+```{r}
+p <- titanic %>% 
+    ggplot(mapping = aes(fate, y = percent, fill = sex)) + 
+    geom_bar(stat = "identity")
+p
+```
+
+```{r}
+p <- titanic %>% 
+    ggplot(mapping = aes(fate, y = percent, fill = sex)) + 
+    geom_bar(stat = "identity", position = "dodge") + 
+    theme(legend.position = "top")
+p
+```
+
