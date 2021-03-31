@@ -1,0 +1,76 @@
+---
+title: "Week3"
+author: "Nicholas Rivera"
+date: "3/30/2021"
+output: html_document
+---
+
+```{r}
+install.packages("plotly")
+install.packages("htmlwidgets")
+```
+
+
+```{r}
+library(plotly)
+packageVersion("plotly")
+```
+
+
+```{r}
+plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length, color = ~Species)
+```
+
+```{r}
+plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length,
+        marker = list(
+            size = 10, 
+            color = 'rgba(255, 182, 193, .9)', 
+            line = list(color = 'rgba(152, 0, 0, .8)', 
+                        width = 2)
+        )) %>% 
+    layout(title = 'Styled Scatter', 
+           yaxis = list(zeroline = FALSE), 
+           xaxis = list(zeroline = FALSE))
+```
+
+```{r}
+library(ggplot2)
+p <- iris %>% 
+    ggplot(mapping = aes(x = Sepal.Length, y = Petal.Length, color = Species)) + 
+    geom_point()
+ggplotly(p)
+```
+
+
+```{r}
+p <- iris %>% 
+    ggplot(mapping = aes(x = Sepal.Length, y = Petal.Length, color = Species)) + 
+    geom_point() + 
+    geom_smooth() + 
+    theme_minimal()
+ggplotly(p)
+```
+
+```{r}
+iris_counts <- iris %>% group_by(Species) %>% summarise(Avg = mean(Petal.Length)) %>% ungroup()
+
+p <- iris_counts %>% 
+    ggplot(mapping = aes(x = Species, y = Avg, fill = Species)) + 
+    geom_bar(stat = "identity") + 
+    theme(legend.position = "none") + 
+    labs(title = "Average Petal Length Per Species", x = "Petal Length (Inches)")
+
+ggplotly(p)
+
+```
+
+```{r}
+p <- iris %>% 
+    ggplot(mapping = aes(x = Species, y = Petal.Length, fill = Species)) + 
+    geom_boxplot() + 
+    theme(legend.position = "none")
+
+ggplotly(p)
+```
+
